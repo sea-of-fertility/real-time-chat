@@ -312,7 +312,7 @@ Mono<Integer> markAsRead(UUID chatId, String senderEmail);
 
 - 개발: H2 (인메모리)
 - 배포: PostgreSQL (R2DBC)
-- `application-prod.yml` 프로파일 분리
+- `application-dev.yml` 프로파일 분리
 
 ### 6-2. 배포 구성
 
@@ -332,7 +332,7 @@ Mono<Integer> markAsRead(UUID chatId, String senderEmail);
 ### 완료 기준
 
 - [ ] Docker 이미지 빌드 및 실행
-- [ ] 프로파일별 설정 동작 (dev / prod)
+- [ ] 프로파일별 설정 동작 (dev / dev)
 - [ ] Nginx 리버스 프록시를 통한 FE ↔ BE 통신
 
 ---

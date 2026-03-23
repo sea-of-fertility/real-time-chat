@@ -1,8 +1,8 @@
 spring:
   r2dbc:
-    url: r2dbc:postgresql://db:5432/chat
-    username: chat
-    password: secret
+    url: ${DB_URL:r2dbc:postgresql://db:5432/chat}
+    username: ${DB_USERNAME:chat}
+    password: ${DB_PASSWORD:secret}
 
 logging:
   level:
