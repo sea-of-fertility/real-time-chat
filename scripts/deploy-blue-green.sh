@@ -21,8 +21,8 @@ COLOR_VAR=$(echo "${INACTIVE}" | tr '[:lower:]' '[:upper:]')
 sed -i "s|^${COLOR_VAR}_IMAGE=.*|${COLOR_VAR}_IMAGE=${IMAGE}|" "$COMPOSE_DIR/.env" || \
     echo "${COLOR_VAR}_IMAGE=${IMAGE}" >> "$COMPOSE_DIR/.env"
 
-# 비활성 컨테이너 시작
-docker compose -f "$COMPOSE_DIR/docker-compose.yml" up -d "app-${INACTIVE}"
+# 비활성 컨테이너를 새 이미지로 재생성
+docker compose -f "$COMPOSE_DIR/docker-compose.yml" up -d --force-recreate "app-${INACTIVE}"
 
 # 헬스체크 대기
 if ! wait_for_healthy "app-${INACTIVE}" 120; then

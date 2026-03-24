@@ -23,7 +23,7 @@ sed -i "s|^GREEN_IMAGE=.*|GREEN_IMAGE=${IMAGE}|" "$COMPOSE_DIR/.env" || \
 save_previous_image "$ACTIVE"
 
 # Step 1: 양쪽 모두 실행 + upstream에 등록
-docker compose -f "$COMPOSE_DIR/docker-compose.yml" up -d "app-${ACTIVE}"
+docker compose -f "$COMPOSE_DIR/docker-compose.yml" up -d --force-recreate "app-${ACTIVE}"
 
 cat > "$NGINX_CONF_DIR/upstream.conf" <<EOF
 upstream chat_backend {
@@ -37,7 +37,7 @@ reload_nginx
 echo "--- Rolling: app-${INACTIVE} 업데이트 ---"
 docker compose -f "$COMPOSE_DIR/docker-compose.yml" stop "app-${INACTIVE}"
 
-docker compose -f "$COMPOSE_DIR/docker-compose.yml" up -d "app-${INACTIVE}"
+docker compose -f "$COMPOSE_DIR/docker-compose.yml" up -d --force-recreate "app-${INACTIVE}"
 
 if ! wait_for_healthy "app-${INACTIVE}" 120; then
     echo "app-${INACTIVE} 헬스체크 실패. 단일 서버로 유지."
@@ -61,7 +61,7 @@ reload_nginx
 echo "--- Rolling: app-${ACTIVE} 업데이트 ---"
 docker compose -f "$COMPOSE_DIR/docker-compose.yml" stop "app-${ACTIVE}"
 
-docker compose -f "$COMPOSE_DIR/docker-compose.yml" up -d "app-${ACTIVE}"
+docker compose -f "$COMPOSE_DIR/docker-compose.yml" up -d --force-recreate "app-${ACTIVE}"
 
 if ! wait_for_healthy "app-${ACTIVE}" 120; then
     echo "app-${ACTIVE} 헬스체크 실패. app-${INACTIVE}만 서비스."
