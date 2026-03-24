@@ -1,9 +1,0 @@
-spring:
-  r2dbc:
-    url: r2dbc:postgresql://db:5432/chat
-    username: chat
-    password: secret
-
-logging:
-  level:
-    org.springframework.r2dbc: DEBUG

@@ -1,0 +1,126 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      strategy:
+        description: '배포 전략'
+        required: true
+        type: choice
+        options:
+          - blue-green
+          - canary
+          - rolling
+        default: 'blue-green'
+      canary_steps:
+        description: 'Canary 가중치 단계 (쉼표 구분, canary 전략만 해당)'
+        required: false
+        type: string
+        default: '10,50,100'
+      image_tag:
+        description: 'Docker 이미지 태그 (비워두면 최신 빌드 사용)'
+        required: false
+        type: string
+        default: ''
+
+jobs:
+  build:
+    uses: ./.github/workflows/gradle.yml
+    secrets: inherit
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Determine image tag
+        id: image
+        run: |
+          if [ -n "${{ inputs.image_tag }}" ]; then
+            TAG="${{ inputs.image_tag }}"
+          else
+            TAG="${{ github.sha }}"
+          fi
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+          echo "full=ghcr.io/${{ github.repository }}:${TAG}" >> $GITHUB_OUTPUT
+
+      - name: Copy files to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          source: "docker-compose.yml,nginx/,scripts/"
+          target: "/root/app"
+
+      - name: Deploy with ${{ inputs.strategy }} strategy
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /root/app
+
+            # Docker 레지스트리 로그인
+            echo "${{ secrets.TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+            # .env 파일 생성 (기존 이미지 변수 보존)
+            touch .env
+
+            # DB 설정
+            grep -q '^DB_NAME=' .env && sed -i 's|^DB_NAME=.*|DB_NAME=${{ secrets.DB_NAME }}|' .env || echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+            grep -q '^DB_USERNAME=' .env && sed -i 's|^DB_USERNAME=.*|DB_USERNAME=${{ secrets.DB_USERNAME }}|' .env || echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
+            grep -q '^DB_PASSWORD=' .env && sed -i 's|^DB_PASSWORD=.*|DB_PASSWORD=${{ secrets.DB_PASSWORD }}|' .env || echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+
+            # 이미지 풀
+            docker pull ghcr.io/${{ github.repository }}:${{ steps.image.outputs.tag }}
+
+            # 스크립트 실행 권한
+            chmod +x /root/app/scripts/*.sh
+
+            # DB + Nginx 실행 보장
+            docker compose up -d db
+            sleep 5
+
+            # 초기 upstream 설정 (없는 경우)
+            mkdir -p /root/app/nginx/conf.d
+            if [ ! -f /root/app/nginx/conf.d/upstream.conf ]; then
+              cp /root/app/nginx/upstream-blue.conf /root/app/nginx/conf.d/upstream.conf
+            fi
+
+            docker compose up -d nginx
+
+            # 선택된 전략 실행
+            case "${{ inputs.strategy }}" in
+              blue-green)
+                /root/app/scripts/deploy-blue-green.sh "${{ steps.image.outputs.full }}"
+                ;;
+              canary)
+                /root/app/scripts/deploy-canary.sh "${{ steps.image.outputs.full }}" "${{ inputs.canary_steps }}"
+                ;;
+              rolling)
+                /root/app/scripts/deploy-rolling.sh "${{ steps.image.outputs.full }}"
+                ;;
+            esac
+
+            # 미사용 이미지 정리
+            docker image prune -f
+
+  rollback:
+    if: failure()
+    needs: deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Execute rollback
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            chmod +x /root/app/scripts/rollback.sh
+            /root/app/scripts/rollback.sh
