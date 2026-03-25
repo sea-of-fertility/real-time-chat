@@ -54,14 +54,13 @@ public class JwtProvider {
                 .getSubject();
     }
 
-    //todo 다국어 처리해야한다. jwt 구현 후에 다국어 세팅할 것
     public void validateToken(String token) {
         try {
             extractEmail(token);
         } catch (ExpiredJwtException _) {
-            throw new ExpiredTokenException("token 만기");
-        } catch (JwtException _) {
-            throw new JwtException("Jwt 예외 발생");
+            throw new ExpiredTokenException();
+        } catch (io.jsonwebtoken.JwtException _) {
+            throw new JwtException();
         }
     }
 }

@@ -1,11 +1,11 @@
 package com.study.realtimechat.exception.login;
 
-public abstract class LoginException extends RuntimeException{
-    protected LoginException() {
-        super();
-    }
+import com.study.realtimechat.exception.CustomException;
+import com.study.realtimechat.exception.ErrorCode;
 
-    protected LoginException(String message) {
-        super(message);
+public abstract class LoginException extends CustomException {
+
+    protected LoginException(ErrorCode errorCode) {
+        super(errorCode);
     }
 }

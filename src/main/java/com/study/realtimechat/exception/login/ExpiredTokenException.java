@@ -1,11 +1,10 @@
 package com.study.realtimechat.exception.login;
 
-public class ExpiredTokenException extends RuntimeException {
-    public ExpiredTokenException() {
-        super();
-    }
+import com.study.realtimechat.exception.ErrorCode;
 
-    public ExpiredTokenException(String message) {
-        super(message);
+public class ExpiredTokenException extends LoginException {
+
+    public ExpiredTokenException() {
+        super(ErrorCode.TOKEN_EXPIRED);
     }
 }

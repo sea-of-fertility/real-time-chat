@@ -1,4 +1,7 @@
 spring:
+  messages:
+    basename: messages
+    encoding: UTF-8
   application:
     name: real-time-chat
   h2:
@@ -25,5 +28,5 @@ logging:
 
 app:
   jwt:
-    secret-key: local
+    secret-key: local-dev-secret-key-that-is-at-least-32-bytes-long
     access-token-expiration: 1800000
