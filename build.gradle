@@ -36,14 +36,15 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    runtimeOnly  'io.r2dbc:r2dbc-h2'
-    runtimeOnly  'com.h2database:h2'
     runtimeOnly  'org.postgresql:r2dbc-postgresql'
 
     //jwt 의존성 추가
     implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0' // or 'io.jsonwebtoken:jjwt-gson:0.13.0' for gson
+
+    //redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
 }
 
 tasks.named('test') {

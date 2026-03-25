@@ -1,5 +1,7 @@
 package com.study.realtimechat.model.entity;
 
+import lombok.Builder;
+import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
@@ -7,10 +9,13 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.Instant;
 
-@Table("user")
+@Getter
+@Builder
+@Table("users")
 public class User {
 
-    @Id()
+    @Id
+    @Column("id")
     private Long id;
 
     @Column("email")
@@ -21,8 +26,12 @@ public class User {
     private String nickname;
     @CreatedDate
     private Instant createdAt;
-    @Column("updateAt")
+    @Column("updated_at")
     private Instant updatedAt;
-    @Column("deleteAt")
+    @Column("deleted_at")
     private Instant deletedAt;
+
+    public void encodePassword(String password) {
+        this.password = password;
+    }
 }

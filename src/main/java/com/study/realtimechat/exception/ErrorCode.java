@@ -16,6 +16,8 @@ public enum ErrorCode {
 
     // User
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "error.user_not_found"),
+    USER_ALREADY_EXISTS(HttpStatus.CONFLICT, "error.user_already_exists"),
+
 
     // Friend
     ALREADY_FRIENDS(HttpStatus.CONFLICT, "error.already_friends"),

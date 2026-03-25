@@ -1,4 +1,4 @@
-package com.study.realtimechat.repository;
+package com.study.realtimechat.auth.repository;
 
 import com.study.realtimechat.model.entity.User;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
@@ -7,5 +7,7 @@ import reactor.core.publisher.Mono;
 
 @Repository
 public interface UserRepository extends ReactiveCrudRepository<User, Long> {
-    Mono<User> findByEmail(Mono<String> email);
+    Mono<User> findByEmail(String email);
+    Mono<Boolean> existsByEmail(String email);
+
 }

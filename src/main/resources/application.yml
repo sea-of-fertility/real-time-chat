@@ -1,17 +1,22 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+    async:
+      timeout: 3600000
+
 spring:
+  profiles:
+    active: local
   messages:
     basename: messages
     encoding: UTF-8
   application:
     name: real-time-chat
-  h2:
-    console:
-      enable: true
-      path: /h2-console
   r2dbc:
-    url: r2dbc:h2:mem:///test
+    url: r2dbc:postgresql://localhost:5432/chat
     username: sa
-    password:
+    password: 1234
 
 management:
   endpoints:

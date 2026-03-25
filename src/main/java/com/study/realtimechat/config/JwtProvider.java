@@ -1,7 +1,7 @@
 package com.study.realtimechat.config;
 
-import com.study.realtimechat.exception.login.ExpiredTokenException;
-import com.study.realtimechat.exception.login.JwtException;
+import com.study.realtimechat.exception.user.ExpiredTokenException;
+import com.study.realtimechat.exception.user.JwtException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
