@@ -30,3 +30,4 @@ app:
   jwt:
     secret-key: local-dev-secret-key-that-is-at-least-32-bytes-long
     access-token-expiration: 1800000
+    refresh-token-expiration: 86400000
