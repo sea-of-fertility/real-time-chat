@@ -1,6 +1,7 @@
 package com.study.realtimechat.auth.handler;
 
 import com.study.realtimechat.auth.model.request.LoginRequest;
+import com.study.realtimechat.auth.model.request.RefreshTokenRequest;
 import com.study.realtimechat.auth.model.request.SignupRequest;
 import com.study.realtimechat.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -30,5 +31,14 @@ public class AuthHandler {
                 .flatMap(reponse -> ServerResponse
                         .ok()
                         .bodyValue(reponse));
+    }
+
+    public Mono<ServerResponse> refreshToken(ServerRequest request) {
+        request.bodyToMono(RefreshTokenRequest.class)
+                .flatMap(authService::refreshToken)
+                .flatMap(response -> ServerResponse
+                        .ok()
+                        .bodyValue(response));
+        return Mono.empty();
     }
 }

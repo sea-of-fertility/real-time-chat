@@ -2,8 +2,10 @@ package com.study.realtimechat.auth.service;
 
 import com.study.realtimechat.auth.model.mapper.LoginMapper;
 import com.study.realtimechat.auth.model.request.LoginRequest;
+import com.study.realtimechat.auth.model.request.RefreshTokenRequest;
 import com.study.realtimechat.auth.model.request.SignupRequest;
 import com.study.realtimechat.auth.model.response.LoginResponse;
+import com.study.realtimechat.auth.model.response.RefreshTokenResponse;
 import com.study.realtimechat.auth.repository.UserRepository;
 import com.study.realtimechat.config.JwtProvider;
 import com.study.realtimechat.exception.user.DuplicateUser;
@@ -51,5 +53,13 @@ public class AuthService {
                     LoginResponse loginResponse = new LoginResponse(jwtProvider.generateAccessToken(user.getEmail()), jwtProvider.generateRefreshToken(user.getEmail()));
                     return Mono.just(loginResponse);
                 });
+    }
+
+    public Mono<RefreshTokenResponse> refreshToken(RefreshTokenRequest request) {
+        String token = request.refreshToken();
+        jwtProvider.validateToken(token);
+        String email = jwtProvider.extractEmail(token);
+        String newAccessToken = jwtProvider.generateAccessToken(email);
+        return Mono.just(new RefreshTokenResponse(newAccessToken));
     }
 }
