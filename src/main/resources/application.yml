@@ -22,3 +22,8 @@ management:
 logging:
   level:
     org.springframework.r2dbc: DEBUG
+
+app:
+  jwt:
+    secret-key: local
+    access-token-expiration: 1800000
