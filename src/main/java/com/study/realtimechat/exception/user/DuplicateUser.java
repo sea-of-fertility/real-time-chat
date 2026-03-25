@@ -1,11 +1,10 @@
 package com.study.realtimechat.exception.user;
 
-public class DuplicateUser extends  RuntimeException {
-    public DuplicateUser() {
-        super();
-    }
+import com.study.realtimechat.exception.CustomException;
+import com.study.realtimechat.exception.ErrorCode;
 
-    public DuplicateUser(String message) {
-        super(message);
+public class DuplicateUser extends CustomException {
+    public DuplicateUser() {
+        super(ErrorCode.EMAIL_ALREADY_EXISTS);
     }
 }
