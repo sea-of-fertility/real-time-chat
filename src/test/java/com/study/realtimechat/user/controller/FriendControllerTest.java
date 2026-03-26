@@ -3,7 +3,7 @@ package com.study.realtimechat.user.controller;
 import com.study.realtimechat.auth.model.request.FriendSendRequest;
 import com.study.realtimechat.config.SecurityConfig;
 import com.study.realtimechat.filter.JwtAuthenticationFilter;
-import com.study.realtimechat.model.enums.FriendRequestStatus;
+import com.study.realtimechat.model.enums.FriendInvitationStatus;
 import com.study.realtimechat.user.domain.response.FriendShipSendResponse;
 import com.study.realtimechat.user.service.FriendService;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,7 +64,7 @@ class FriendControllerTest {
     void 친구_요청() {
         // given
         var request = new FriendSendRequest("friend@example.com");
-        var response = new FriendShipSendResponse(1L, FriendRequestStatus.PENDING);
+        var response = new FriendShipSendResponse(1L, FriendInvitationStatus.PENDING);
 
         given(friendService.sendRequest(any(), any()))
                 .willReturn(Mono.just(response));
@@ -98,7 +98,7 @@ class FriendControllerTest {
         var response1 = new FriendPendingResponse(1L, "user1@example.com", "유저1", Instant.parse("2026-03-26T10:00:00Z"));
         var response2 = new FriendPendingResponse(2L, "user2@example.com", "유저2", Instant.parse("2026-03-26T11:00:00Z"));
 
-        given(friendService.getReceivedFriendRequests(any()))
+        given(friendService.getReceivedFriendInvitations(any()))
                 .willReturn(Flux.just(response1, response2));
 
         // when & then

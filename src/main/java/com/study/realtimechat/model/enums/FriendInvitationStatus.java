@@ -1,6 +1,6 @@
 package com.study.realtimechat.model.enums;
 
-public enum FriendRequestStatus {
+public enum FriendInvitationStatus {
     PENDING,
     ACCEPTED,
     REJECTED

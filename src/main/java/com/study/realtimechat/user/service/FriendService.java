@@ -3,10 +3,12 @@ package com.study.realtimechat.user.service;
 
 import com.study.realtimechat.exception.ErrorCode;
 import com.study.realtimechat.exception.user.DuplicatedRequest;
-import com.study.realtimechat.model.entity.FriendRequestEntity;
-import com.study.realtimechat.model.enums.FriendRequestStatus;
+import com.study.realtimechat.model.entity.FriendInvitationEntity;
+import com.study.realtimechat.model.enums.FriendInvitationStatus;
 import com.study.realtimechat.repository.FriendShipSendRepository;
 import com.study.realtimechat.repository.FriendShipRepository;
+import com.study.realtimechat.user.domain.enums.FriendAction;
+import com.study.realtimechat.user.domain.request.Friend;
 import com.study.realtimechat.user.domain.response.FriendPendingResponse;
 import com.study.realtimechat.user.domain.response.FriendShipSendResponse;
 import com.study.realtimechat.user.domain.mapper.FriendShipMapper;
@@ -26,7 +28,7 @@ public class FriendService {
 
     public Mono<FriendShipSendResponse> sendRequest(String fromEmail, String toEmail) {
         if(fromEmail.equals(toEmail)){
-            return Mono.error(new DuplicatedRequest(ErrorCode.SELF_FRIEND_REQUEST));
+            return Mono.error(new DuplicatedRequest(ErrorCode.SELF_FRIEND_INVITATION));
         }
 
         return friendShipRepository.existsBetween(fromEmail, toEmail)
@@ -34,22 +36,22 @@ public class FriendService {
                     if (Boolean.TRUE.equals(isFriend)) {
                         return Mono.error(new DuplicatedRequest(ErrorCode.ALREADY_FRIEND));
                     }
-                    return friendShipSendRepository.existsPendingBetween(fromEmail, toEmail, FriendRequestStatus.PENDING);
+                    return friendShipSendRepository.existsPendingBetween(fromEmail, toEmail, FriendInvitationStatus.PENDING);
                 })
                 .flatMap(hasPending -> {
                     if (Boolean.TRUE.equals(hasPending)) {
-                        return Mono.error(new DuplicatedRequest(ErrorCode.FRIEND_REQUEST_ALREADY_SENT));
+                        return Mono.error(new DuplicatedRequest(ErrorCode.FRIEND_INVITATION_ALREADY_SENT));
                     }
-                    return friendShipSendRepository.save(FriendRequestEntity.builder()
+                    return friendShipSendRepository.save(FriendInvitationEntity.builder()
                                     .fromEmail(fromEmail)
                                     .toEmail(toEmail)
-                                    .status(FriendRequestStatus.PENDING)
+                                    .status(FriendInvitationStatus.PENDING)
                                     .build())
                             .map(friendShipMapper::toFriendShipSendResponse);
                 });
     }
 
-    public Flux<FriendPendingResponse> getReceivedFriendRequests(String email) {
+    public Flux<FriendPendingResponse> getReceivedFriendInvitations(String email) {
         return friendShipSendRepository.findReceivedRequests(email);
     }
 }

@@ -16,7 +16,7 @@ create table if not exists friendship (
     created_at timestamp not null default current_timestamp
 );
 
-create table if not exists friend_request(
+create table if not exists friend_invitation(
     id bigint generated always AS identity primary key,
     from_email varchar(100) not null,
     to_email varchar(100) not null,
