@@ -1,5 +1,6 @@
 package com.study.realtimechat.auth.controller;
 
+import com.study.realtimechat.auth.model.request.CheckEmailRequest;
 import com.study.realtimechat.auth.model.request.LoginRequest;
 import com.study.realtimechat.auth.model.request.RefreshTokenRequest;
 import com.study.realtimechat.auth.model.request.SignupRequest;
@@ -37,5 +38,10 @@ public class AuthController {
     @PostMapping("/refresh")
     public Mono<RefreshTokenResponse> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
         return authService.refreshToken(request);
+    }
+
+    @PostMapping("/email")
+    public Mono<Boolean> isEmailDuplicated(@Valid @RequestBody CheckEmailRequest request) {
+        return authService.isEmailDuplicated(request);
     }
 }

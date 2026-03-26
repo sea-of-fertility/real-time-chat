@@ -1,6 +1,7 @@
 package com.study.realtimechat.auth.service;
 
 import com.study.realtimechat.auth.model.mapper.LoginMapper;
+import com.study.realtimechat.auth.model.request.CheckEmailRequest;
 import com.study.realtimechat.auth.model.request.LoginRequest;
 import com.study.realtimechat.auth.model.request.RefreshTokenRequest;
 import com.study.realtimechat.auth.model.request.SignupRequest;
@@ -30,7 +31,7 @@ public class AuthService {
     public Mono<LoginResponse> signup(SignupRequest request) {
         return userRepository.existsByEmail(request.email())
                 .flatMap(exits -> {
-                    if (exits) {
+                    if (Boolean.TRUE.equals(exits)) {
                         return Mono.error(new DuplicateUser());
                     }
 
@@ -61,5 +62,9 @@ public class AuthService {
         String email = jwtProvider.extractEmail(token);
         String newAccessToken = jwtProvider.generateAccessToken(email);
         return Mono.just(new RefreshTokenResponse(newAccessToken));
+    }
+
+    public Mono<Boolean> isEmailDuplicated(CheckEmailRequest request) {
+        return userRepository.existsByEmail(request.email());
     }
 }
