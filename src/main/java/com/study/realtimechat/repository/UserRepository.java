@@ -1,4 +1,4 @@
-package com.study.realtimechat.auth.repository;
+package com.study.realtimechat.repository;
 
 import com.study.realtimechat.model.entity.User;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;

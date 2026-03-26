@@ -7,7 +7,7 @@ import com.study.realtimechat.auth.model.request.RefreshTokenRequest;
 import com.study.realtimechat.auth.model.request.SignupRequest;
 import com.study.realtimechat.auth.model.response.LoginResponse;
 import com.study.realtimechat.auth.model.response.RefreshTokenResponse;
-import com.study.realtimechat.auth.repository.UserRepository;
+import com.study.realtimechat.repository.UserRepository;
 import com.study.realtimechat.config.JwtProvider;
 import com.study.realtimechat.exception.user.DuplicateUser;
 import com.study.realtimechat.exception.user.UserNotFoundException;
