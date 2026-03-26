@@ -22,8 +22,9 @@ public enum ErrorCode {
     // Friend
     ALREADY_FRIENDS(HttpStatus.CONFLICT, "error.already_friends"),
     FRIEND_REQUEST_ALREADY_SENT(HttpStatus.CONFLICT, "error.friend_request_already_sent"),
-    SELF_FRIEND_REQUEST(HttpStatus.BAD_REQUEST, "error.self_friend_request");
-
+    SELF_FRIEND_REQUEST(HttpStatus.BAD_REQUEST, "error.self_friend_request"),
+    ALREADY_FRIEND(HttpStatus.BAD_REQUEST, "error.duplicated_friend_request"),
+    ;
     private final HttpStatus httpStatus;
     private final String messageKey;
 }
