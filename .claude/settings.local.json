@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs -I{} jar tf {})",
+      "Bash(jar tf:*)",
+      "Bash(find ~/.gradle/caches -name spring-boot-*webflux*test*4.0.3*.jar -o -name spring-boot-*test*webflux*4.0.3*.jar)",
+      "Bash(./gradlew compileJava)",
+      "Bash(./gradlew test:*)",
+      "Bash(./gradlew asciidoctor:*)"
+    ]
+  }
+}
