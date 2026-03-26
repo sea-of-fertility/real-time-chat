@@ -1,41 +1,38 @@
 package com.study.realtimechat.user.controller;
 
 import com.study.realtimechat.auth.model.request.FriendSendRequest;
-import com.study.realtimechat.user.domain.request.Friend;
+import com.study.realtimechat.user.domain.request.FriendInvitationRequest;
 import com.study.realtimechat.user.domain.response.FriendPendingResponse;
 import com.study.realtimechat.user.domain.response.FriendShipSendResponse;
 import com.study.realtimechat.user.service.FriendService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
+@RequestMapping("/friends")
 @RequiredArgsConstructor
 public class FriendController {
 
     private final FriendService friendService;
 
-    @PostMapping("/friend")
+    @PostMapping("/invitations")
     public Mono<FriendShipSendResponse> sendFriendInvitation(@AuthenticationPrincipal String email,
                                                           @Valid @RequestBody FriendSendRequest request) {
         return friendService.sendRequest(email, request.email());
     }
 
-    @GetMapping("/friend/pending")
+    @GetMapping("/invitations")
     public Flux<FriendPendingResponse> getReceivedFriendInvitations(@AuthenticationPrincipal String email) {
         return friendService.getReceivedFriendInvitations(email);
     }
 
-    @PutMapping("/friend/request")
+    @PutMapping("/invitations")
     public Mono<FriendShipSendResponse> respondToInvitation(@AuthenticationPrincipal String email,
-                                                            @Valid @RequestBody Friend request) {
+                                                            @Valid @RequestBody FriendInvitationRequest request) {
         return friendService.respondToRequest(email, request);
     }
 }

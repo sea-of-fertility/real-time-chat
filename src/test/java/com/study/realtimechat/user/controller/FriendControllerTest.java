@@ -75,7 +75,7 @@ class FriendControllerTest {
         webTestClient
                 .mutateWith(SecurityMockServerConfigurers.mockAuthentication(auth))
                 .mutateWith(SecurityMockServerConfigurers.csrf())
-                .post().uri("/friend")
+                .post().uri("/invitations")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(request)
                 .exchange()
@@ -106,7 +106,7 @@ class FriendControllerTest {
 
         webTestClient
                 .mutateWith(SecurityMockServerConfigurers.mockAuthentication(auth))
-                .get().uri("/friend/pending")
+                .get().uri("/invitations")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
