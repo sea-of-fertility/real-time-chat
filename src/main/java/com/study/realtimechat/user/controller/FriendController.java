@@ -2,6 +2,7 @@ package com.study.realtimechat.user.controller;
 
 import com.study.realtimechat.auth.model.request.FriendSendRequest;
 import com.study.realtimechat.user.domain.request.FriendInvitationRequest;
+import com.study.realtimechat.user.domain.response.FriendListResponse;
 import com.study.realtimechat.user.domain.response.FriendPendingResponse;
 import com.study.realtimechat.user.domain.response.FriendShipSendResponse;
 import com.study.realtimechat.user.service.FriendService;
@@ -18,6 +19,11 @@ import reactor.core.publisher.Mono;
 public class FriendController {
 
     private final FriendService friendService;
+
+    @GetMapping
+    public Flux<FriendListResponse> getFriendList(@AuthenticationPrincipal String email){
+        return friendService.getFriendList(email);
+    }
 
     @PostMapping("/invitations")
     public Mono<FriendShipSendResponse> sendFriendInvitation(@AuthenticationPrincipal String email,

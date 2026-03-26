@@ -7,9 +7,11 @@ import com.study.realtimechat.model.entity.FriendInvitationEntity;
 import com.study.realtimechat.model.enums.FriendInvitationStatus;
 import com.study.realtimechat.repository.FriendInvitationRepository;
 import com.study.realtimechat.repository.FriendShipRepository;
+import com.study.realtimechat.repository.UserRepository;
 import com.study.realtimechat.user.domain.enums.FriendAction;
 import com.study.realtimechat.user.domain.mapper.FriendShipMapper;
 import com.study.realtimechat.user.domain.request.FriendInvitationRequest;
+import com.study.realtimechat.user.domain.response.FriendListResponse;
 import com.study.realtimechat.user.domain.response.FriendPendingResponse;
 import com.study.realtimechat.user.domain.response.FriendShipSendResponse;
 
@@ -24,10 +26,15 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class FriendService {
 
+    private final UserRepository userRepository;
     private final FriendShipRepository friendShipRepository;
     private final FriendInvitationRepository friendInvitationRepository;
 
     private final FriendShipMapper friendShipMapper;
+
+    public Flux<FriendListResponse> getFriendList(String email){
+        return friendShipRepository.findFriendList(email);
+    }
 
     public Mono<FriendShipSendResponse> sendRequest(String fromEmail, String toEmail) {
         if(fromEmail.equals(toEmail)){
@@ -55,6 +62,20 @@ public class FriendService {
     }
 
     public Flux<FriendPendingResponse> getReceivedFriendInvitations(String email) {
-        return friendShipSendRepository.findReceivedRequests(email);
+        return friendInvitationRepository.findReceivedRequests(email);
+    }
+
+    public Mono<FriendShipSendResponse> respondToRequest(String myEmail, FriendInvitationRequest friend) {
+        return friendInvitationRepository.findByFromEmailAndToEmailAndStatus(friend.email(), myEmail, FriendInvitationStatus.PENDING)
+                .switchIfEmpty(Mono.error(new DuplicatedRequest(ErrorCode.FRIEND_INVITATION_NOT_FOUND)))
+                .flatMap(r -> {
+                    r.accept(friend.action());
+                    Mono<Void> afterSave = friend.action() == FriendAction.ACCEPTED
+                            ? friendShipRepository.save(friendShipMapper.toFriendShipEntity(r)).then()
+                            : Mono.empty();
+                    return friendInvitationRepository.save(r)
+                            .then(afterSave)
+                            .thenReturn(friendShipMapper.toFriendShipSendResponse(r));
+                });
     }
 }

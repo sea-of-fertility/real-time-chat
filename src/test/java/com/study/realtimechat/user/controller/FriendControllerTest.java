@@ -4,6 +4,7 @@ import com.study.realtimechat.auth.model.request.FriendSendRequest;
 import com.study.realtimechat.config.SecurityConfig;
 import com.study.realtimechat.filter.JwtAuthenticationFilter;
 import com.study.realtimechat.model.enums.FriendInvitationStatus;
+import com.study.realtimechat.user.domain.response.FriendListResponse;
 import com.study.realtimechat.user.domain.response.FriendShipSendResponse;
 import com.study.realtimechat.user.service.FriendService;
 import org.junit.jupiter.api.BeforeEach;
@@ -75,7 +76,7 @@ class FriendControllerTest {
         webTestClient
                 .mutateWith(SecurityMockServerConfigurers.mockAuthentication(auth))
                 .mutateWith(SecurityMockServerConfigurers.csrf())
-                .post().uri("/invitations")
+                .post().uri("/friends/invitations")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(request)
                 .exchange()
@@ -106,7 +107,7 @@ class FriendControllerTest {
 
         webTestClient
                 .mutateWith(SecurityMockServerConfigurers.mockAuthentication(auth))
-                .get().uri("/invitations")
+                .get().uri("/friends/invitations")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
@@ -116,6 +117,32 @@ class FriendControllerTest {
                                 fieldWithPath("[].fromEmail").description("요청 보낸 사용자 이메일"),
                                 fieldWithPath("[].fromNickname").description("요청 보낸 사용자 닉네임"),
                                 fieldWithPath("[].createdAt").description("요청 시각 (ISO 8601)")
+                        )
+                ));
+    }
+
+    @Test
+    void 친구_목록_조회() {
+        // given
+        var response1 = new FriendListResponse("friend1@example.com", "친구1");
+        var response2 = new FriendListResponse("friend2@example.com", "친구2");
+
+        given(friendService.getFriendList(any()))
+                .willReturn(Flux.just(response1, response2));
+
+        // when & then
+        var auth = new UsernamePasswordAuthenticationToken("test@example.com", null, List.of());
+
+        webTestClient
+                .mutateWith(SecurityMockServerConfigurers.mockAuthentication(auth))
+                .get().uri("/friends")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .consumeWith(document("friend-list",
+                        responseFields(
+                                fieldWithPath("[].email").description("친구 이메일"),
+                                fieldWithPath("[].nickname").description("친구 닉네임")
                         )
                 ));
     }
