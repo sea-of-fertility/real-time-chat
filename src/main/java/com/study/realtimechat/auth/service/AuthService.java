@@ -1,23 +1,23 @@
 package com.study.realtimechat.auth.service;
 
-import com.study.realtimechat.auth.model.mapper.LoginMapper;
-import com.study.realtimechat.auth.model.request.CheckEmailRequest;
-import com.study.realtimechat.auth.model.request.LoginRequest;
-import com.study.realtimechat.auth.model.request.RefreshTokenRequest;
-import com.study.realtimechat.auth.model.request.SignupRequest;
-import com.study.realtimechat.auth.model.response.LoginResponse;
-import com.study.realtimechat.auth.model.response.RefreshTokenResponse;
-import com.study.realtimechat.repository.UserRepository;
-import com.study.realtimechat.config.JwtProvider;
-import com.study.realtimechat.exception.user.DuplicateUser;
-import com.study.realtimechat.exception.user.UserNotFoundException;
-import com.study.realtimechat.model.entity.User;
+import com.study.realtimechat.auth.mapper.LoginMapper;
+import com.study.realtimechat.auth.dto.request.CheckEmailRequest;
+import com.study.realtimechat.auth.dto.request.LoginRequest;
+import com.study.realtimechat.auth.dto.request.RefreshTokenRequest;
+import com.study.realtimechat.auth.dto.request.SignupRequest;
+import com.study.realtimechat.auth.dto.response.LoginResponse;
+import com.study.realtimechat.auth.dto.response.RefreshTokenResponse;
+import com.study.realtimechat.auth.repository.UserRepository;
+import com.study.realtimechat.global.security.JwtProvider;
+import com.study.realtimechat.global.exception.DuplicateUser;
+import com.study.realtimechat.global.exception.UserNotFoundException;
+import com.study.realtimechat.auth.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-import static com.study.realtimechat.exception.ErrorCode.USER_NOT_FOUND;
+import static com.study.realtimechat.global.exception.ErrorCode.USER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor

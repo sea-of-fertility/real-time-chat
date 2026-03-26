@@ -1,11 +1,11 @@
 package com.study.realtimechat.auth.controller;
 
-import com.study.realtimechat.auth.model.request.CheckEmailRequest;
-import com.study.realtimechat.auth.model.request.LoginRequest;
-import com.study.realtimechat.auth.model.request.RefreshTokenRequest;
-import com.study.realtimechat.auth.model.request.SignupRequest;
-import com.study.realtimechat.auth.model.response.LoginResponse;
-import com.study.realtimechat.auth.model.response.RefreshTokenResponse;
+import com.study.realtimechat.auth.dto.request.CheckEmailRequest;
+import com.study.realtimechat.auth.dto.request.LoginRequest;
+import com.study.realtimechat.auth.dto.request.RefreshTokenRequest;
+import com.study.realtimechat.auth.dto.request.SignupRequest;
+import com.study.realtimechat.auth.dto.response.LoginResponse;
+import com.study.realtimechat.auth.dto.response.RefreshTokenResponse;
 import com.study.realtimechat.auth.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
