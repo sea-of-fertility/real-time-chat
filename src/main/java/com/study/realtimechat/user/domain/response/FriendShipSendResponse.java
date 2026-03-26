@@ -1,4 +1,4 @@
-package com.study.realtimechat.user.domain;
+package com.study.realtimechat.user.domain.response;
 
 import com.study.realtimechat.model.enums.FriendRequestStatus;
 

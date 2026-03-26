@@ -7,18 +7,21 @@ import com.study.realtimechat.model.entity.FriendRequestEntity;
 import com.study.realtimechat.model.enums.FriendRequestStatus;
 import com.study.realtimechat.repository.FriendShipSendRepository;
 import com.study.realtimechat.repository.FriendShipRepository;
-import com.study.realtimechat.user.domain.FriendShipSendResponse;
+import com.study.realtimechat.user.domain.response.FriendPendingResponse;
+import com.study.realtimechat.user.domain.response.FriendShipSendResponse;
 import com.study.realtimechat.user.domain.mapper.FriendShipMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
 public class FriendService {
 
-    private final FriendShipSendRepository friendShipSendRepository;
     private final FriendShipRepository friendShipRepository;
+    private final FriendShipSendRepository friendShipSendRepository;
+
     private final FriendShipMapper friendShipMapper;
 
     public Mono<FriendShipSendResponse> sendRequest(String fromEmail, String toEmail) {
@@ -28,13 +31,13 @@ public class FriendService {
 
         return friendShipRepository.existsBetween(fromEmail, toEmail)
                 .flatMap(isFriend -> {
-                    if (isFriend) {
+                    if (Boolean.TRUE.equals(isFriend)) {
                         return Mono.error(new DuplicatedRequest(ErrorCode.ALREADY_FRIEND));
                     }
                     return friendShipSendRepository.existsPendingBetween(fromEmail, toEmail, FriendRequestStatus.PENDING);
                 })
                 .flatMap(hasPending -> {
-                    if (hasPending) {
+                    if (Boolean.TRUE.equals(hasPending)) {
                         return Mono.error(new DuplicatedRequest(ErrorCode.FRIEND_REQUEST_ALREADY_SENT));
                     }
                     return friendShipSendRepository.save(FriendRequestEntity.builder()
@@ -44,5 +47,9 @@ public class FriendService {
                                     .build())
                             .map(friendShipMapper::toFriendShipSendResponse);
                 });
+    }
+
+    public Flux<FriendPendingResponse> getReceivedFriendRequests(String email) {
+        return friendShipSendRepository.findReceivedRequests(email);
     }
 }
